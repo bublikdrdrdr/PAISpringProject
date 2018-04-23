@@ -1,14 +1,20 @@
 package tk.ubublik.pai.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails{
 
     @Id
@@ -18,18 +24,43 @@ public class User implements UserDetails{
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(name = "password_changed", nullable = false)
-    private Timestamp passwordChanged;
+    private Date passwordChanged;
+
+    @Column(nullable = false)
+    private Date registered;
 
     @Column(nullable = false)
     private boolean enabled;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Block> blocks;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Account> accounts;
+
+    @OneToMany(mappedBy = "user")
+    private List<PasswordResetRequest> passwordResetRequests;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new HashSet<>();
+        Set<GrantedAuthority> set = new HashSet<>();
+        switch (role){ //yes, without break;
+            case ADMIN: set.add(Role.ADMIN.getGrantedAuthority());
+            case MODERATOR: set.add(Role.MODERATOR.getGrantedAuthority());
+            case USER: set.add(Role.USER.getGrantedAuthority());
+        }
+        return set;
     }
 
     @Override
@@ -62,41 +93,13 @@ public class User implements UserDetails{
         return enabled;
     }
 
-    public User() {
-    }
-
-    public User(String username, String password, Timestamp passwordChanged, boolean enabled) {
+    public User(String username, String email, String password, Date passwordChanged, Date registered, boolean enabled, Role role) {
         this.username = username;
+        this.email = email;
         this.password = password;
         this.passwordChanged = passwordChanged;
+        this.registered = registered;
         this.enabled = enabled;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Timestamp getPasswordChanged() {
-        return passwordChanged;
-    }
-
-    public void setPasswordChanged(Timestamp passwordChanged) {
-        this.passwordChanged = passwordChanged;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        this.role = role;
     }
 }
