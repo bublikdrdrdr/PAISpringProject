@@ -4,16 +4,29 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
+		jcenter()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "gradle.plugin.com.scalified.plugins.gradle:metamodel:0.0.1"
+		//classpath "at.comm_unity.gradle.plugins:jpamodelgen-plugin:1.1.4"
 	}
 }
+/*
+plugins {
+	id "at.comm_unity.gradle.plugins.jpamodelgen" version "1.1.1"
+}*/
 
+//apply plugin: "com.github.iboyko.gradle.plugins.jpamodelgen"
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: "com.scalified.plugins.gradle.metamodel"
+//apply plugin: 'at.comm_unity.gradle.plugins.jpamodelgen'
 
 group = 'tk.ubublik'
 version = '0.0.1-SNAPSHOT'
@@ -23,16 +36,13 @@ repositories {
 	mavenCentral()
 }
 
-
 dependencies {
-	compile("org.springframework.ldap:spring-ldap-core")
-	compile("org.springframework.security:spring-security-ldap")
-	compile("org.springframework:spring-tx")
-	compile("com.unboundid:unboundid-ldapsdk")
 	compile('javax.servlet:jstl:1.2')
+	testCompile 'junit:junit:4.12'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
-    compile group: 'org.webjars', name: 'bootstrap', version: '3.2.0'
-    compile group: 'org.webjars', name: 'webjars-locator', version: '0.30'
+	compile group: 'org.webjars', name: 'bootstrap', version: '3.2.0'
+	compile group: 'org.webjars', name: 'webjars-locator', version: '0.30'
 
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-security')
@@ -44,3 +54,26 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
 }
+
+metamodel {
+	srcDir = 'src/generated/java' // metamodel generated source directory
+	hibernateVersion = '+' // hibernate static metamodel generator version
+	processor = 'org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor' // metamodel processor
+}
+
+/*
+
+sourceSets {
+	generated {
+		java.srcDir "${buildDir}/generated/src/java/"
+	}
+}
+
+ext['hibernate.version'] = '5.0.7.Final'
+
+jpaModelgen {
+	library = "org.hibernate:hibernate-jpamodelgen:5.0.7.Final"
+	jpaModelgenSourcesDir = "src/generated/java"
+}
+
+compileJava.options.compilerArgs += ["-proc:none"]*/
