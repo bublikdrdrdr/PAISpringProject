@@ -23,6 +23,6 @@ public class PasswordResetRequest {
 	@Column(nullable = false)
 	private Date date;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String hash;
 }

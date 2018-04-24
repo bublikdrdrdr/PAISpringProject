@@ -10,4 +10,8 @@ public enum Role {
     public GrantedAuthority getGrantedAuthority(){
         return new SimpleGrantedAuthority(this.name());
     }
+
+    public static Role parse(String s){
+        return Enum.valueOf(Role.class, s.toUpperCase());
+    }
 }

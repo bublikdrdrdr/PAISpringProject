@@ -26,6 +26,12 @@ public class Account {
     @Column
     private Date created;
 
+    @Column
+    private boolean blocked;
+
+    @Column
+    private boolean deleted;
+
     @OneToMany(mappedBy = "sender")
     private List<Transaction> sentTransactions;
 
