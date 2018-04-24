@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "app.account.limit",
+      "type": "java.lang.Integer",
+      "description": "Max accounts number for single user"
+    }
+  ]
+}

@@ -41,6 +41,8 @@ dependencies {
 	testCompile 'junit:junit:4.12'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
+	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+
 	compile group: 'org.webjars', name: 'bootstrap', version: '3.2.0'
 	compile group: 'org.webjars', name: 'webjars-locator', version: '0.30'
 
