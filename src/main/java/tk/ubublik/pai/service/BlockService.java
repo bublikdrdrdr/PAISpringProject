@@ -9,7 +9,7 @@ import tk.ubublik.pai.entity.User;
 
 public interface BlockService extends SearchableService<BlockDTO, BlockSearchDTO> {
 
-	boolean isUserBlocked(User user);
+	boolean isUserBlocked(Long id);
 	BlockDTO getCurrentBlock();
 	Errors addBlock(BlockDTO blockDTO);
 	Errors updateBlock(BlockDTO blockDTO);
