@@ -16,4 +16,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("select a from Account a join fetch a.owner where a.id =  :id")
     Account getFetched(@Param("id") long id);
+
+    @Query("select  a from Account a where a.owner = :user and a.name like :name")
+    Account getByName(@Param("user") User user, @Param("name") String name);
 }

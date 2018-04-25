@@ -1,6 +1,7 @@
 package tk.ubublik.pai.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import tk.ubublik.pai.utility.AccountUtils;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "accounts")
 @Data
+@NoArgsConstructor
 public class Account {
 
     @Id
@@ -42,4 +44,11 @@ public class Account {
         return id==null?null:AccountUtils.idToAccountNumber(id);
     }
 
+    public Account(User owner, String name, Date created, boolean blocked, boolean deleted) {
+        this.owner = owner;
+        this.name = name;
+        this.created = created;
+        this.blocked = blocked;
+        this.deleted = deleted;
+    }
 }

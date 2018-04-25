@@ -11,5 +11,6 @@ import tk.ubublik.pai.validation.Errors;
 public interface AccountService extends SearchableService<AccountDTO, AccountSearchDTO> {
 
 	Errors addAccount(AccountDTO accountDTO);
+	Errors validateAccountName(AccountDTO accountDTO);
 	Errors updateAccount(AccountDTO accountDTO);
 }
