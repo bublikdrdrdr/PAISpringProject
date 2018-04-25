@@ -6,6 +6,9 @@ import tk.ubublik.pai.entity.User;
 public class UserDTO extends ConvertibleDTO<User> {
 
 	public Long id;
+	public String username;
+	public String email;
+	public String password;
 	public String role;
 
 	public UserDTO() {
