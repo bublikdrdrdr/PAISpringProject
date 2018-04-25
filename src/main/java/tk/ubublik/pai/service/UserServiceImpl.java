@@ -2,8 +2,11 @@ package tk.ubublik.pai.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tk.ubublik.pai.entity.Role;
 import tk.ubublik.pai.entity.User_;
@@ -13,20 +16,24 @@ import tk.ubublik.pai.entity.User;
 import tk.ubublik.pai.repository.UserRepository;
 import tk.ubublik.pai.validation.UserValidator;
 import tk.ubublik.pai.validation.Validator;
-
 import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private UserValidator validator;
+    private SecurityService securityService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private SecurityService securityService;
+    public UserServiceImpl(UserRepository userRepository, UserValidator validator,
+                           SecurityService securityService, PasswordEncoder passwordEncoder){
+        this.userRepository = userRepository;
+        this.validator = validator;
+        this.securityService = securityService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -40,23 +47,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Errors registerUser(UserDTO userDTO) {
         Errors errors = Errors.emptyInstance();
-        User user = userDTO.toEntity();
-        errors.addAll(validateEmail(user.getEmail()));
-        errors.addAll(validateUsername(user.getUsername()));
-        errors.addAll(validatePassword(user.getPassword()));
+        errors.addAll(validateEmail(userDTO.email));
+        errors.addAll(validateUsername(userDTO.username));
+        errors.addAll(validatePassword(userDTO.password));
         Role role = validateRole(userDTO, errors);
         if (!errors.isEmpty()) return errors;
-        user.setId(null);
         Date now = new Date();
-        user.setPasswordChanged(now);
-        user.setRegistered(now);
-        user.setEnabled(true);
         if (role!=null && role!=Role.USER){
             if (!securityService.hasRole(Role.ADMIN)) throw new AccessDeniedException("Admin authority required");
-        } else{
-            role = Role.USER;
-        }
-        user.setRole(role);
+        } else role = Role.USER;
+        User user = new User(userDTO.username, userDTO.email, passwordEncoder.encode(userDTO.password), now, now, true, role);
         userRepository.save(user);
         return errors;
     }
@@ -83,13 +83,46 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Errors updateUser(UserDTO userDTO) {
-        return null;
+    @PreAuthorize("hasRole('USER')")
+    public Errors updateUser(UserDTO userDTO){
+        Errors errors = Errors.emptyInstance();
+        User authenticated = securityService.getAuthenticatedUser();
+        User updatableUser = null;
+        if (userDTO.id!=null && !userDTO.id.equals(authenticated.getId())){
+            if (securityService.hasRole(Role.MODERATOR))
+                throw new AccessDeniedException("Moderator authority required");
+            else
+                updatableUser = userRepository.getOne(userDTO.id);
+        }
+        if (updatableUser==null) updatableUser = userRepository.getOne(authenticated.getId());
+        Role updateRole;
+        try {
+            updateRole = userDTO.getRole();
+        } catch (IllegalArgumentException e){
+            errors.add(Validator.ValidationHelper.format("role"));
+            return errors;
+        }
+        if (updateRole!=null){
+            if (!securityService.hasRole(Role.ADMIN))
+                throw new AccessDeniedException("Admin authority required");
+            else updatableUser.setRole(updateRole);
+        }
+        if (userDTO.email!=null && !userDTO.email.equals(updatableUser.getEmail())) {
+            errors.addAll(validateEmail(userDTO.email));
+            updatableUser.setEmail(userDTO.email);
+        }
+        if (userDTO.password!=null) {
+            errors.addAll(validatePassword(userDTO.password));
+            updatableUser.setPasswordChanged(new Date());
+            updatableUser.setPassword(passwordEncoder.encode(userDTO.password));
+        }
+        if (errors.isEmpty()) userRepository.save(updatableUser);
+        return errors;
     }
 
     @Override
     public User getUserByEmail(String email) {
-        return null;
+        return userRepository.findByEmail(email);
     }
 
     private Role validateRole(UserDTO userDTO, Errors errors){
