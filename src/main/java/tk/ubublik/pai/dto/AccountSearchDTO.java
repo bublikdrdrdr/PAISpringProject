@@ -13,16 +13,13 @@ public class AccountSearchDTO extends SearchDTO<AccountDTO> {
 
 	@Override
 	public Pageable getPageable() {
-		Sort sort = getSort();
-		if (sort==null)
-			return PageRequest.of(page, size);
-		else return PageRequest.of(page, size, sort);
+		return getPageable(getSort());
 	}
 
 	private Sort getSort(){
 		if (order == null) return null;
 		switch (order.toLowerCase()){
-			case Account_.NAME: return Sort.by(getDirection(), Account_.NAME);
+			case "name": return Sort.by(getDirection(), Account_.NAME);
 			case "date": return Sort.by(getDirection(), Account_.CREATED);
 			default: return null;
 		}
