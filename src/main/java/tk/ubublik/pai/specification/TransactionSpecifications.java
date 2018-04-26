@@ -6,7 +6,12 @@ import tk.ubublik.pai.entity.Account;
 import tk.ubublik.pai.entity.Transaction;
 import tk.ubublik.pai.entity.Transaction_;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionSpecifications {
 
@@ -35,7 +40,11 @@ public class TransactionSpecifications {
 	}
 
 	public static Specification<Transaction> limitByAmount(@Nullable Long minAmount, @Nullable Long maxAmount){
-		return null;
-		//TODO
+		return (Specification<Transaction>) (root, query, criteriaBuilder) -> {
+			List<Predicate> predicates = new ArrayList<>();
+			if (minAmount!=null) predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Transaction_.amount), minAmount));
+			if (maxAmount!=null) predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(Transaction_.amount), maxAmount));
+			return criteriaBuilder.and((Predicate[])predicates.toArray());
+		};
 	}
 }

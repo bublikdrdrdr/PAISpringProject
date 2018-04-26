@@ -1,6 +1,6 @@
 package tk.ubublik.pai.exception;
 
-public class AccountNumberFormatException extends Exception {
+public class AccountNumberFormatException extends RuntimeException {
 
     public AccountNumberFormatException() {
     }

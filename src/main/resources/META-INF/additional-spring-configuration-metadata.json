@@ -3,7 +3,12 @@
     {
       "name": "app.account.limit",
       "type": "java.lang.Integer",
-      "description": "Max accounts number for single user"
+      "description": "Max accounts number for single user."
+    },
+    {
+      "name": "app.transaction.limit",
+      "type": "java.lang.Long",
+      "description": "Max transaction amount."
     }
   ]
 }

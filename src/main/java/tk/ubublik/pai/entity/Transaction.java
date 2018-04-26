@@ -1,6 +1,7 @@
 package tk.ubublik.pai.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "transactions")
 @Data
+@NoArgsConstructor
 public class Transaction {
 
     @Id
@@ -33,4 +35,13 @@ public class Transaction {
 
     @Enumerated(value = EnumType.STRING)
     private TransactionStatus status;
+
+    public Transaction(Account sender, Account receiver, Long amount, String message, Date date, TransactionStatus status) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.amount = amount;
+        this.message = message;
+        this.date = date;
+        this.status = status;
+    }
 }

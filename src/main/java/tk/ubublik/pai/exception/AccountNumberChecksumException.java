@@ -1,6 +1,6 @@
 package tk.ubublik.pai.exception;
 
-public class AccountNumberChecksumException extends Exception {
+public class AccountNumberChecksumException extends RuntimeException {
 
     public AccountNumberChecksumException() {
     }
