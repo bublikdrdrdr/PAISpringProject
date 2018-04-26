@@ -1,6 +1,7 @@
 package tk.ubublik.pai.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "blocks")
 @Data
+@NoArgsConstructor
 public class Block {
 
     @Id
@@ -17,7 +19,7 @@ public class Block {
     @Column(nullable = false)
     private Date start;
 
-    @Column
+    @Column(nullable = false)
     private Date end;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -31,4 +33,15 @@ public class Block {
     @Column
     private String reason;
 
+    @Column
+    private boolean canceled;
+
+    public Block(Date start, Date end, User user, User admin, String reason, boolean canceled) {
+        this.start = start;
+        this.end = end;
+        this.user = user;
+        this.admin = admin;
+        this.reason = reason;
+        this.canceled = canceled;
+    }
 }
