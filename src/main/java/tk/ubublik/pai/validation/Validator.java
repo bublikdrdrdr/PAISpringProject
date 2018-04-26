@@ -16,6 +16,7 @@ public interface Validator<E> {
 		public static final String required = "required";
 		public static final String format = "format";
 		public static final String unique = "unique";
+		public static final String limit = "limit";
 
 		public static String required(String field){
 			return wrap(field, required);
@@ -27,6 +28,10 @@ public interface Validator<E> {
 
 		public static String unique(String field){
 			return wrap(field, unique);
+		}
+
+		public static String limit(String field) {
+			return wrap(field, limit);
 		}
 
 		public static String wrap(String field, String error){

@@ -1,6 +1,7 @@
 package tk.ubublik.pai.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import tk.ubublik.pai.entity.Role;
 import tk.ubublik.pai.entity.User;
 import tk.ubublik.pai.repository.AccountRepository;
 import tk.ubublik.pai.repository.UserRepository;
+import tk.ubublik.pai.utility.AccountUtils;
 import tk.ubublik.pai.validation.AccountValidator;
 import tk.ubublik.pai.validation.Errors;
 import tk.ubublik.pai.validation.Validator;
@@ -25,6 +27,9 @@ public class AccountServiceImpl implements AccountService {
 	private AccountRepository accountRepository;
 	private SecurityService securityService;
 	private AccountValidator accountValidator;
+
+	@Value("${app.account.limit:10}")
+	private int accountLimit;
 
 	@Autowired
 	public AccountServiceImpl(UserRepository userRepository, AccountRepository accountRepository,
@@ -40,6 +45,7 @@ public class AccountServiceImpl implements AccountService {
 	public Errors addAccount(AccountDTO accountDTO) {
 		User updatableUser = getUpdatableUser(accountDTO.userId);
 		Errors errors = validateAccountName(accountDTO.name, updatableUser);
+		if (accountRepository.countAccountByOwner(updatableUser)>accountLimit) errors.add(Validator.ValidationHelper.limit("accounts"));
 		Account account = new Account(updatableUser, accountDTO.name, new Date(), false, false);
 		if (errors.isEmpty()) accountRepository.save(account);
 		return errors;
@@ -49,6 +55,16 @@ public class AccountServiceImpl implements AccountService {
 	@PreAuthorize("hasRole('USER')")
 	public Errors validateAccountName(AccountDTO accountDTO){
 		return validateAccountName(accountDTO.name, getUpdatableUser(accountDTO.userId));
+	}
+
+	@Override
+	public boolean validateAccountNumber(String accountNumber) {
+		try {
+			AccountUtils.accountNumberToId(accountNumber);
+			return true;
+		} catch (Exception e){
+			return false;
+		}
 	}
 
 	private Errors validateAccountName(String name, User updatableUser) {

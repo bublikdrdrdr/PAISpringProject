@@ -3,12 +3,13 @@ package tk.ubublik.pai.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tk.ubublik.pai.entity.Account;
 import tk.ubublik.pai.entity.User;
 
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpecificationExecutor<Account> {
 
     @Query(value = "select a from Account a where a.owner = :user",
     countQuery = "select count(a.id) from Account a where a.owner = :user")
@@ -19,4 +20,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("select  a from Account a where a.owner = :user and a.name like :name")
     Account getByName(@Param("user") User user, @Param("name") String name);
+
+    long countAccountByOwner(User owner);
 }

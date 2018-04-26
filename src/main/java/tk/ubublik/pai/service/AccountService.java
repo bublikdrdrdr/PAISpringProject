@@ -12,5 +12,6 @@ public interface AccountService extends SearchableService<AccountDTO, AccountSea
 
 	Errors addAccount(AccountDTO accountDTO);
 	Errors validateAccountName(AccountDTO accountDTO);
+	boolean validateAccountNumber(String accountNumber);
 	Errors updateAccount(AccountDTO accountDTO);
 }
