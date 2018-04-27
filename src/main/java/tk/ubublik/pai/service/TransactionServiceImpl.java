@@ -19,9 +19,6 @@ import tk.ubublik.pai.specification.TransactionSpecifications;
 import tk.ubublik.pai.utility.AccountUtils;
 import tk.ubublik.pai.validation.Errors;
 import tk.ubublik.pai.validation.Validator;
-
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 
 @Service
@@ -65,7 +62,7 @@ public class TransactionServiceImpl implements TransactionService {
 		Account receiver = receiverId == null ? null : accountRepository.getOne(receiverId);
 
 		if (sender != null) {
-			if (getAccountAvailableBalance(sender) < transactionDTO.amount)
+			if (transactionRepository.getAvailableBalance(sender) < transactionDTO.amount)
 				errors.add(Validator.ValidationHelper.limit("amount"));
 			if (sender.isBlocked() || sender.isDeleted())
 				errors.add(Validator.ValidationHelper.wrap("sender", "denied"));
@@ -109,12 +106,7 @@ public class TransactionServiceImpl implements TransactionService {
 		if (!account.getOwner().getId().equals(securityService.getAuthenticatedUser().getId())
 				&& !securityService.hasRole(Role.MODERATOR))
 			throw new AccessDeniedException("Moderator authorities required");
-		return getAccountAvailableBalance(account);
-	}
-
-	private long getAccountAvailableBalance(Account account) {
-		return transactionRepository.receivedSummary(account, Collections.singletonList(TransactionStatus.ACCEPTED))
-				- transactionRepository.sentSummary(account, Arrays.asList(TransactionStatus.ACCEPTED, TransactionStatus.SENT));
+		return transactionRepository.getAvailableBalance(account);
 	}
 
 	@Override

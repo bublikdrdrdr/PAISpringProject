@@ -8,6 +8,8 @@ import tk.ubublik.pai.entity.Account;
 import tk.ubublik.pai.entity.Transaction;
 import tk.ubublik.pai.entity.TransactionStatus;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction> {
@@ -17,4 +19,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 
 	@Query("select sum(t.amount) from Transaction t where t.receiver = :receiver and t.status in :statusList")
 	long receivedSummary(@Param("receiver") Account receiver, @Param("statusList")List<TransactionStatus> statusList);
+
+	default long getAvailableBalance(Account account){
+		return receivedSummary(account, Collections.singletonList(TransactionStatus.ACCEPTED))
+				- sentSummary(account, Arrays.asList(TransactionStatus.ACCEPTED, TransactionStatus.SENT));
+	}
 }

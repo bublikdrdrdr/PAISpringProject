@@ -13,12 +13,14 @@ import tk.ubublik.pai.entity.Account_;
 import tk.ubublik.pai.entity.Role;
 import tk.ubublik.pai.entity.User;
 import tk.ubublik.pai.repository.AccountRepository;
+import tk.ubublik.pai.repository.TransactionRepository;
 import tk.ubublik.pai.repository.UserRepository;
 import tk.ubublik.pai.utility.AccountUtils;
 import tk.ubublik.pai.validation.AccountValidator;
 import tk.ubublik.pai.validation.Errors;
 import tk.ubublik.pai.validation.Validator;
 import java.util.Date;
+import java.util.function.Function;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -27,17 +29,19 @@ public class AccountServiceImpl implements AccountService {
 	private AccountRepository accountRepository;
 	private SecurityService securityService;
 	private AccountValidator accountValidator;
+	private TransactionRepository transactionRepository;
 
 	@Value("${app.account.limit:10}")
 	private int accountLimit;
 
 	@Autowired
-	public AccountServiceImpl(UserRepository userRepository, AccountRepository accountRepository,
-	                          SecurityService securityService, AccountValidator accountValidator) {
+	public AccountServiceImpl(UserRepository userRepository, AccountRepository accountRepository, SecurityService securityService,
+	                          AccountValidator accountValidator, TransactionRepository transactionRepository) {
 		this.userRepository = userRepository;
 		this.accountRepository = accountRepository;
 		this.securityService = securityService;
 		this.accountValidator = accountValidator;
+		this.transactionRepository = transactionRepository;
 	}
 
 	@Override
@@ -97,7 +101,8 @@ public class AccountServiceImpl implements AccountService {
 	@PreAuthorize("hasRole('USER')")
 	public Page<AccountDTO> search(AccountSearchDTO searchDTO) {
 		User updatableUser = getUpdatableUser(searchDTO.userId);
-		return accountRepository.findByUser(updatableUser, searchDTO.getPageable()).map(AccountDTO::new);
+		return accountRepository.findByUser(updatableUser, searchDTO.getPageable())
+				.map(account -> new AccountDTO(account, transactionRepository.getAvailableBalance(account)));
 	}
 
 	private User getUpdatableUser(Long userId){
