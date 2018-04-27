@@ -17,6 +17,6 @@ public interface BlockRepository extends JpaRepository<Block, Long>, JpaSpecific
 			"and b.end <= :date")
 	boolean isUserBlocked(@Param("user") User user, @Param("date") Date date);
 
-	@Query("select b from Block b join fetch all properties where b.id = :id")
+	@Query("select b from Block b join fetch b.user join fetch b.admin where b.id = :id")
 	Block getFetched(@Param("id") long id);
 }

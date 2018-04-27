@@ -46,6 +46,9 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user")
     private List<Block> blocks;
 
+    @OneToMany(mappedBy = "admin")
+    private List<Block> adminBlocks;
+
     @OneToMany(mappedBy = "owner")
     private List<Account> accounts;
 
