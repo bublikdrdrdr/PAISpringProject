@@ -1,5 +1,6 @@
 package tk.ubublik.pai.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 @Table(name = "transactions")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
     @Id

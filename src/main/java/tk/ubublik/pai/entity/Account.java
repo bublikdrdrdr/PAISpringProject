@@ -1,5 +1,6 @@
 package tk.ubublik.pai.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tk.ubublik.pai.utility.AccountUtils;
@@ -12,6 +13,7 @@ import java.util.List;
 @Table(name = "accounts")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Account {
 
     @Id
