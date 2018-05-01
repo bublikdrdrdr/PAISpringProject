@@ -1,10 +1,12 @@
 package tk.ubublik.pai.dto;
 
+import lombok.Data;
 import tk.ubublik.pai.entity.Role;
 import tk.ubublik.pai.entity.User;
 
 import java.util.Date;
 
+@Data
 public class UserDTO extends ConvertibleDTO<User> {
 
 	public Long id;
