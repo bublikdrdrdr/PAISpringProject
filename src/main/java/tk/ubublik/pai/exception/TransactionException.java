@@ -2,7 +2,7 @@ package tk.ubublik.pai.exception;
 
 import tk.ubublik.pai.validation.Errors;
 
-public class TransactionException extends Exception {
+public class TransactionException extends RuntimeException {
 
 	private Errors errors;
 

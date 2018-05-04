@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tk.ubublik.pai.entity.Role;
 import tk.ubublik.pai.entity.User_;
+import tk.ubublik.pai.repository.BlockRepository;
 import tk.ubublik.pai.validation.Errors;
 import tk.ubublik.pai.dto.UserDTO;
 import tk.ubublik.pai.entity.User;
@@ -25,14 +26,16 @@ public class UserServiceImpl implements UserService {
     private UserValidator validator;
     private SecurityService securityService;
     private PasswordEncoder passwordEncoder;
+    private BlockRepository blockRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserValidator validator,
-                           SecurityService securityService, PasswordEncoder passwordEncoder){
+    public UserServiceImpl(UserRepository userRepository, UserValidator validator, SecurityService securityService,
+                           PasswordEncoder passwordEncoder, BlockRepository blockRepository){
         this.userRepository = userRepository;
         this.validator = validator;
         this.securityService = securityService;
         this.passwordEncoder = passwordEncoder;
+        this.blockRepository = blockRepository;
     }
 
     @Override
@@ -41,7 +44,14 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
+        user.setBlocked(blockRepository.isUserBlocked(user, new Date()));
         return user;
+    }
+
+    @Override
+    @PreAuthorize("hasRole('USER')")
+    public UserDTO getUserById(long id) throws AccessDeniedException {
+        return new UserDTO(userRepository.getOne(id));
     }
 
     @Override
@@ -121,8 +131,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public UserDTO getUserByEmail(String email) {
+        return new UserDTO(userRepository.findByEmail(email));
     }
 
     private Role validateRole(UserDTO userDTO, Errors errors){

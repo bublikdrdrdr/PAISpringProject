@@ -8,11 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MvcConfig implements WebMvcConfigurer {
 
     private static final String[] viewControllerArray = new String[]{
-            "/index", "index",
-            "/", "index",
             "/about", "about",
-            "/login", "login",
-            "/registration", "registration"
+            "/login", "login"
     };
 
     @Override

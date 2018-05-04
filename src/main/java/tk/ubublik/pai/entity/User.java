@@ -55,6 +55,10 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user")
     private List<PasswordResetRequest> passwordResetRequests;
 
+    //this value depends on existing Block rows, so it's set in UserDetailsService using BlockRepository (bad logic, I know)
+    @Transient
+    private boolean blocked;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> set = new HashSet<>();
@@ -83,7 +87,7 @@ public class User implements UserDetails{
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !blocked;
     }
 
     @Override
@@ -104,5 +108,10 @@ public class User implements UserDetails{
         this.registered = registered;
         this.enabled = enabled;
         this.role = role;
+    }
+
+    public User(Long id, String username, String email, String password, Date passwordChanged, Date registered, boolean enabled, Role role) {
+        this(username, email, password, passwordChanged, registered, enabled, role);
+        this.id = id;
     }
 }

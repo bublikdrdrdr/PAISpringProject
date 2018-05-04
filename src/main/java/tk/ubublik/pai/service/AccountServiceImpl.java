@@ -47,7 +47,14 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	@PreAuthorize("hasRole('USER')")
 	public Errors addAccount(AccountDTO accountDTO) {
-		User updatableUser = getUpdatableUser(accountDTO.userId);
+		User updatableUser = securityService.getAuthenticatedUser();
+		if (accountDTO.userId!=null && !accountDTO.userId.equals(updatableUser.getId())){
+			if (securityService.hasRole(Role.MODERATOR)){
+				updatableUser = getUpdatableUser(accountDTO.userId);
+			} else {
+				throw new AccessDeniedException("Moderator authority required");
+			}
+		}
 		Errors errors = validateAccountName(accountDTO.name, updatableUser);
 		if (accountRepository.countAccountByOwner(updatableUser)>accountLimit) errors.add(Validator.ValidationHelper.limit("accounts"));
 		Account account = new Account(updatableUser, accountDTO.name, new Date(), false, false);

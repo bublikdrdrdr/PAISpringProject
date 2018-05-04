@@ -45,7 +45,6 @@ public class UserDTO extends ConvertibleDTO<User> {
 
 	@Override
 	public User toEntity() {
-		return new User(id, username, email, password, passwordChanged, registered, enabled, getRole(), null,
-				null, null, null);
+		return new User(id, username, email, password, passwordChanged, registered, enabled, getRole());
 	}
 }

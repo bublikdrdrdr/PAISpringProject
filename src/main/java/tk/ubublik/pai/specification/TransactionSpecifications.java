@@ -44,7 +44,7 @@ public class TransactionSpecifications {
 			List<Predicate> predicates = new ArrayList<>();
 			if (minAmount!=null) predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Transaction_.amount), minAmount));
 			if (maxAmount!=null) predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(Transaction_.amount), maxAmount));
-			return criteriaBuilder.and((Predicate[])predicates.toArray());
+			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		};
 	}
 }

@@ -7,6 +7,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 @Configuration
 @EnableWebSecurity
@@ -16,7 +23,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers("/about", "/registration", "/resources/**", "/webjars", "/webjars/**", "/*.js", "/*.css", "/test/**").permitAll()
+				.antMatchers("/accounts", "/about", "/registration", "/stats",
+						"/resources/**", "/webjars", "/webjars/**", "/*.js", "/*.css", "/test/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()

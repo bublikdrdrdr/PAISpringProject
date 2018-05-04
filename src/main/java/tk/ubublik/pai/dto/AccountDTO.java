@@ -21,6 +21,13 @@ public class AccountDTO extends ConvertibleDTO<Account> {
 	public AccountDTO() {
 	}
 
+	public AccountDTO(Long userId, String name, Boolean blocked, Boolean deleted) {
+		this.userId = userId;
+		this.name = name;
+		this.blocked = blocked;
+		this.deleted = deleted;
+	}
+
 	public AccountDTO(Long id, Long userId, String name, String accountNumber, Boolean blocked, Boolean deleted, Date created, Long availableAmount) {
 		this.id = id;
 		this.userId = userId;

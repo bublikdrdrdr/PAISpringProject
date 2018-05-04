@@ -19,7 +19,7 @@ public class SecurityServiceImpl implements SecurityService {
 	@Override
 	public User getAuthenticatedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication.getCredentials() instanceof User) return (User) authentication.getCredentials();
+		if (authentication.getPrincipal() instanceof User) return (User) authentication.getPrincipal();
 		return null;
 	}
 }

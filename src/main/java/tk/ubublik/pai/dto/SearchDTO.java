@@ -1,14 +1,20 @@
 package tk.ubublik.pai.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public abstract class SearchDTO<D> {
 
-	public int page;
-	public int size;
+	public Integer page;
+	public Integer size;
 	public String order;
 	public boolean desc = false;
 
@@ -17,6 +23,8 @@ public abstract class SearchDTO<D> {
 	}
 
 	protected Pageable getPageable(@Nullable Sort sort){
+		if (page==null) page = 0;
+		if (size==null) size = 50;
 		if (sort==null)
 			return PageRequest.of(page, size);
 		else return PageRequest.of(page, size, sort);
