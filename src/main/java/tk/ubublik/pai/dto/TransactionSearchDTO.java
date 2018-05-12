@@ -14,13 +14,15 @@ public class TransactionSearchDTO extends SearchDTO<TransactionDTO> {
 	public String receiver;
 	public String account;
 	public boolean strict = false;
+	public boolean sentOnly = false;
 
-	public TransactionSearchDTO(Integer page, Integer size, String order, boolean desc, String sender, String receiver, String account, boolean strict, Long min, Long max) {
+	public TransactionSearchDTO(Integer page, Integer size, String order, boolean desc, String sender, String receiver, String account, boolean strict, boolean sentOnly, Long min, Long max) {
 		super(page, size, order, desc);
 		this.sender = sender;
 		this.receiver = receiver;
 		this.account = account;
 		this.strict = strict;
+		this.sentOnly = sentOnly;
 		this.min = min;
 		this.max = max;
 	}

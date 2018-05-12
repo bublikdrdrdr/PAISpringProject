@@ -48,7 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
 			errors.add(Validator.ValidationHelper.required("receiver"));
 			throw new TransactionException(errors);
 		}
-		if (transactionDTO.sender == null || transactionDTO.receiver == null && !securityService.hasRole(Role.MODERATOR))
+		if ((transactionDTO.sender == null || transactionDTO.receiver == null) && !securityService.hasRole(Role.MODERATOR))
 			throw new AccessDeniedException("Moderator authority required");
 		Long senderId = getAccountIdFromNumber("sender", transactionDTO.sender, errors);
 		Long receiverId = getAccountIdFromNumber("receiver", transactionDTO.receiver, errors);
@@ -72,13 +72,13 @@ public class TransactionServiceImpl implements TransactionService {
 			errors.add(Validator.ValidationHelper.wrap("receiver", "denied"));
 		}
 		Transaction transaction = new Transaction(sender, receiver, transactionDTO.amount, transactionDTO.message, new Date(), TransactionStatus.SENT);
-		if (!errors.isEmpty()) transactionRepository.save(transaction);
+		if (errors.isEmpty()) transactionRepository.save(transaction);
 		return errors;
 	}
 
 	private Long getAccountIdFromNumber(String field, String accountNumber, Errors errors) {
 		try {
-			if (accountNumber != null) return AccountUtils.accountNumberToId(accountNumber);
+			if (accountNumber != null && !accountNumber.isEmpty()) return AccountUtils.accountNumberToId(accountNumber);
 		} catch (AccountNumberFormatException | AccountNumberChecksumException e) {
 			errors.add(Validator.ValidationHelper.format(field));
 		}

@@ -1,10 +1,12 @@
 package tk.ubublik.pai.dto;
 
+import lombok.Data;
 import tk.ubublik.pai.entity.Transaction;
 import tk.ubublik.pai.entity.TransactionStatus;
 
 import java.util.Date;
 
+@Data
 public class TransactionDTO extends ConvertibleDTO<Transaction>{
 
 	public Long id;

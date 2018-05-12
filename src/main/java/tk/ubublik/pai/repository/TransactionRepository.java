@@ -26,15 +26,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 				- sentSummary(account, Arrays.asList(TransactionStatus.ACCEPTED, TransactionStatus.SENT));*/
 		long amount = 0;
 		for (Transaction transaction: getAllByAccount(account)){
-			if (transaction.getSender().getId().equals(account.getId())){
+			if (transaction.getSender()!=null && account.getId().equals(transaction.getSender().getId())){
 				if (transaction.getStatus()!=TransactionStatus.CANCELED) amount -= transaction.getAmount();
-			} else if (transaction.getReceiver().getId().equals(account.getId()) && transaction.getStatus()==TransactionStatus.SENT){
-				amount += transaction.getAmount();
+			} else {
+				if (transaction.getReceiver()!=null && account.getId().equals(transaction.getReceiver().getId()) && transaction.getStatus()==TransactionStatus.ACCEPTED){
+					amount += transaction.getAmount();
+				}
 			}
 		}
 		return amount;
 	}
 
-	@Query("select t from Transaction t join fetch t.sender join fetch t.receiver where t.sender = :account or t.receiver = :account")
+	@Query("select t from Transaction t where t.sender = :account or t.receiver = :account")
 	List<Transaction> getAllByAccount(@Param("account") Account account);
 }

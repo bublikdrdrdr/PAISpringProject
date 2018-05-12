@@ -43,7 +43,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="/profile">Profile</a></li>
                             <li sec:authorize="hasAnyAuthority('MODERATOR', 'ADMIN')"><a href="/transaction-management">Transaction management</a></li>
-                            <li sec:authorize="hasAnyAuthority('MODERATOR', 'ADMIN')"><a href="/users">Users search</a></li>
+                            <!--<li sec:authorize="hasAnyAuthority('MODERATOR', 'ADMIN')"><a href="/users">Users search</a></li>-->
                             <li><a href="/logout">Log out</a></li>
                         </ul>
                     </li>
