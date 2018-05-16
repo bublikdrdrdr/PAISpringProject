@@ -10,6 +10,10 @@
     <script>
         function valipatePasswords(form) {
             var password = form.elements["password"].value;
+            if (password == null || password === ""){
+                passwordRepeatErrorElement.style.display = 'none';
+                return true;
+            }
             var passwordRepeatErrorElement = document.getElementById("password-repeat-error");
             if (password !== form.elements["repeatPassword"].value){
                 passwordRepeatErrorElement.style.display = 'block';
@@ -27,10 +31,11 @@
     <form th:action="@{/profile}" th:object="${user}" onsubmit="valipatePasswords(this)" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" name="id" th:value="${user.id}">
-        <input type="text" name="username" placeholder="Username" disabled="disabled" th:value="${user.username}">
-        <input type="email" name="email" placeholder="Email" th:value="${user.email}">
-        <input type="password" name="oldPassword" placeholder="Old password">
-        <input type="password" name="password" placeholder="New password">
+        <input type="text" name="username" placeholder="Username" disabled="disabled" th:value="${user.username}"><br>
+        <input type="email" name="email" placeholder="Email" th:value="${user.email}"><br>
+        <input type="password" name="oldPassword" placeholder="Old password"><br>
+        <input type="password" name="password" th:value="${user.password}" placeholder="New password"><br>
+        <input type="password" name="repeatPassword" placeholder="Repeat password"><br>
         <label sec:authorize="hasAnyAuthority('MODERATOR', 'ADMIN')">
             Role:
             <select name="role" sec:authorize="hasAuthority('ADMIN')">
@@ -38,8 +43,8 @@
                 <option name="MODERATOR" value="MODERATOR">MODERATOR</option>
                 <option name="ADMIN" value="ADMIN">ADMIN</option>
             </select>
+            <br>
         </label>
-        <input type="password" name="repeatPassword" placeholder="Repeat password">
         <div>
             <p id="password-repeat-error" class="bg-danger" style="display: none;">Passwords don't match</p>
         </div>

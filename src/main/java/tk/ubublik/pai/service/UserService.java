@@ -17,4 +17,5 @@ public interface UserService extends UserDetailsService{
 	Errors validatePassword(String password);
 	Errors updateUser(UserDTO userDTO) throws AccessDeniedException, EntityNotFoundException;
 	UserDTO getUserByEmail(String email);
+	UserDTO getUserByUsername(String username);
 }

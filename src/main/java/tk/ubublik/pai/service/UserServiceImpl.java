@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         User authenticated = securityService.getAuthenticatedUser();
         User updatableUser = null;
         if (userDTO.id!=null && !userDTO.id.equals(authenticated.getId())){
-            if (securityService.hasRole(Role.MODERATOR))
+            if (!securityService.hasRole(Role.MODERATOR))
                 throw new AccessDeniedException("Moderator authority required");
             else
                 updatableUser = userRepository.getOne(userDTO.id);
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
             errors.addAll(validateEmail(userDTO.email));
             updatableUser.setEmail(userDTO.email);
         }
-        if (userDTO.password!=null) {
+        if (userDTO.password!=null && !userDTO.password.isEmpty()) {
             errors.addAll(validatePassword(userDTO.password));
             updatableUser.setPasswordChanged(new Date());
             updatableUser.setPassword(passwordEncoder.encode(userDTO.password));
@@ -132,7 +132,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserByEmail(String email) {
-        return new UserDTO(userRepository.findByEmail(email));
+        try {
+            return new UserDTO(userRepository.findByEmail(email));
+        } catch (NullPointerException e){
+            return null;
+        }
+    }
+
+    @Override
+    public UserDTO getUserByUsername(String username) {
+        try {
+            return new UserDTO(userRepository.findByUsername(username));
+        } catch (NullPointerException e){
+            return null;
+        }
     }
 
     private Role validateRole(UserDTO userDTO, Errors errors){
