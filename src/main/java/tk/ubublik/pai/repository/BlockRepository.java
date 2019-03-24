@@ -4,11 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import tk.ubublik.pai.entity.Block;
 import tk.ubublik.pai.entity.User;
 
 import java.util.Date;
 
+@Repository
 public interface BlockRepository extends JpaRepository<Block, Long>, JpaSpecificationExecutor<Block> {
 
 	@Query("select case when count(b) > 0 then true else false end " +

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import tk.ubublik.pai.entity.Account;
 import tk.ubublik.pai.entity.Transaction;
 import tk.ubublik.pai.entity.TransactionStatus;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction> {
 
 	@Query("select sum(t.amount) from Transaction t where t.sender = :sender and t.status in :statusList")
