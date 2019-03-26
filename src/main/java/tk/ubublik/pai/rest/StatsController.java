@@ -32,6 +32,6 @@ public class StatsController {
 
     @PostMapping
     public void addRate(@RequestBody RateDTO rate) {
-
+        rateService.save(rate);
     }
 }
